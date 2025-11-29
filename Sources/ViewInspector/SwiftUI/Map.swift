@@ -54,20 +54,31 @@ public extension InspectableView where View == ViewType.Map {
         try mapRectBinding().wrappedValue = rect
     }
     
+    // Old Map API types (MapUserTrackingMode, MapInteractionModes) are not available in iOS 17+ / macOS 14+
+    // These types were removed in favor of the new Map API (MapCameraPosition, MapContent, etc.)
+    // Conditionally compile only when targeting older platforms
+    #if (os(iOS) && !swift(>=6.0)) || (os(macOS) && !swift(>=6.0)) || (!os(iOS) && !os(macOS))
+    @available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+    @available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
     func userTrackingMode() throws -> MapUserTrackingMode {
         return try userTrackingModeBinding()?.wrappedValue ?? .none
     }
     
+    @available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+    @available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
     func setUserTrackingMode(_ mode: MapUserTrackingMode) throws {
         try guardIsResponsive()
         try userTrackingModeBinding()?.wrappedValue = mode
     }
     
+    @available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+    @available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
     func interactionModes() throws -> MapInteractionModes {
         return try Inspector.attribute(path: "provider|interactionModes",
                                        value: content.view,
                                        type: MapInteractionModes.self)
     }
+    #endif
 
     func showsUserLocation() throws -> Bool {
         return try Inspector.attribute(path: "provider|showsUserLocation",
@@ -75,6 +86,10 @@ public extension InspectableView where View == ViewType.Map {
                                        type: Bool.self)
     }
     
+    // Old Map API type _MapAnnotationData is not available in iOS 17+ / macOS 14+
+    #if (os(iOS) && !swift(>=6.0)) || (os(macOS) && !swift(>=6.0)) || (!os(iOS) && !os(macOS))
+    @available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+    @available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
     func mapAnnotation<I>(_ item: I) throws -> InspectableView<ViewType.MapAnnotation>
     where I: Identifiable {
         let call = "mapAnnotation(id<\(item.id)>)"
@@ -90,6 +105,7 @@ public extension InspectableView where View == ViewType.Map {
         let medium = content.medium.resettingViewModifiers()
         return try .init(Content(annotation, medium: medium), parent: self, call: call)
     }
+    #endif
 }
 
 @available(iOS 14.0, tvOS 14.0, macOS 11.0, watchOS 7.0, *)
@@ -117,11 +133,16 @@ private extension InspectableView where View == ViewType.Map {
                                        type: Binding<MKMapRect>.self)
     }
     
+    // Old Map API types are not available in iOS 17+ / macOS 14+
+    #if (os(iOS) && !swift(>=6.0)) || (os(macOS) && !swift(>=6.0)) || (!os(iOS) && !os(macOS))
+    @available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+    @available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
     func userTrackingModeBinding() throws -> Binding<MapUserTrackingMode>? {
         return try Inspector.attribute(path: "provider|userTrackingMode",
                                        value: content.view,
                                        type: Binding<MapUserTrackingMode>?.self)
     }
+    #endif
 }
 
 #if swift(>=6.0)
@@ -132,7 +153,10 @@ internal protocol IdentifiableItemsContainer {
     func contains<T: Identifiable>(_ item: T) -> Bool
 }
 
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, watchOS 7.0, *)
+// Old Map API type _DefaultAnnotatedMapContent is not available in iOS 17+ / macOS 14+
+#if (os(iOS) && !swift(>=6.0)) || (os(macOS) && !swift(>=6.0)) || (!os(iOS) && !os(macOS))
+@available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+@available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
 extension _DefaultAnnotatedMapContent: IdentifiableItemsContainer {
     func contains<T: Identifiable>(_ item: T) -> Bool {
         guard let item = item as? Items.Element,
@@ -141,5 +165,6 @@ extension _DefaultAnnotatedMapContent: IdentifiableItemsContainer {
         return items.lazy.map({ $0.id }).contains(item.id)
     }
 }
+#endif
 
 #endif
