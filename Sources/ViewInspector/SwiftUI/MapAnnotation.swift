@@ -40,11 +40,15 @@ public extension InspectableView where View == ViewType.MapAnnotation {
 }
 
 // MARK: - SwiftUI MapAnnotation
+// Old Map API types (MapAnnotation, MapMarker, MapPin) are not available in iOS 17+ / macOS 14+
+// These were replaced by Annotation in the new Map API
 
+#if (os(iOS) && !swift(>=6.0)) || (os(macOS) && !swift(>=6.0)) || (!os(iOS) && !os(macOS))
 #if swift(>=6.0)
 @MainActor
 #endif
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, watchOS 7.0, *)
+@available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+@available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
 public extension MapAnnotation {
     
     func coordinate() throws -> CLLocationCoordinate2D {
@@ -69,7 +73,8 @@ public extension MapAnnotation {
 #if swift(>=6.0)
 @MainActor
 #endif
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, watchOS 7.0, *)
+@available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+@available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
 public extension MapMarker {
     
     func coordinate() throws -> CLLocationCoordinate2D {
@@ -88,7 +93,8 @@ public extension MapMarker {
 #if swift(>=6.0)
 @MainActor
 #endif
-@available(iOS 14.0, tvOS 14.0, macOS 11.0, watchOS 7.0, *)
+@available(iOS, introduced: 14.0, deprecated: 17.0, obsoleted: 17.0)
+@available(macOS, introduced: 11.0, deprecated: 14.0, obsoleted: 14.0)
 public extension MapPin {
     
     func coordinate() throws -> CLLocationCoordinate2D {
@@ -101,5 +107,6 @@ public extension MapPin {
             label: "tintColor", value: self, type: Color?.self)
     }
 }
+#endif
 
 #endif
