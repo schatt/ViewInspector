@@ -7,7 +7,7 @@ let package = Package(
     name: "ViewInspector",
     defaultLocalization: "en",
     platforms: [
-        .macOS(.v10_15), .iOS(.v12), .tvOS(.v13), .watchOS(.v7), .visionOS(.v1)
+        .macOS(.v15), .iOS(.v17), .tvOS(.v13), .watchOS(.v7), .visionOS(.v1)
     ],
     products: [
         .library(
